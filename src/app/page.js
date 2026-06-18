@@ -28,6 +28,7 @@ export default function Home() {
     // Refs
     const fileInputRef = useRef(null);
     const importInputRef = useRef(null);
+    const streamListRef = useRef(null);
 
     // Load state from localStorage on mount
     useEffect(() => {
@@ -51,6 +52,13 @@ export default function Home() {
             alert("Storage Quota Exceeded! Your device doesn't have enough local storage left. Please perform a Nightly Review to clear out your daily stream.");
         }
     }, [rawStream, masterLog, anchors, briefings, mounted]);
+
+    // Auto-scroll stream to top when new entry is added
+    useEffect(() => {
+        if (streamListRef.current) {
+            streamListRef.current.scrollTop = 0;
+        }
+    }, [rawStream.length]);
 
     // Utilities
     const getTimestamp = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -310,7 +318,7 @@ export default function Home() {
                         <button className="btn btn-primary" onClick={() => addStreamEntry(streamInput)}>Log</button>
                     </div>
 
-                    <div className="raw-stream-list">
+                    <div className="raw-stream-list" ref={streamListRef}>
                         {[...rawStream].reverse().map(entry => (
                             <div key={entry.id} className={`stream-entry ${entry.isHighlighted ? 'highlighted' : ''}`}>
                                 <div className="stream-time">{entry.time}</div>
