@@ -27,6 +27,7 @@ export default function Home() {
 
     // Refs
     const fileInputRef = useRef(null);
+    const importInputRef = useRef(null);
 
     // Load state from localStorage on mount
     useEffect(() => {
@@ -54,6 +55,39 @@ export default function Home() {
     // Utilities
     const getTimestamp = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const getDateString = () => new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+    // Data Management
+    const exportData = () => {
+        const data = { stream: rawStream, master: masterLog, anchors: anchors, briefings: briefings };
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", `mizuta_backup_${new Date().toISOString().split('T')[0]}.json`);
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+    };
+
+    const handleImport = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+                try {
+                    const data = JSON.parse(evt.target.result);
+                    if (data.stream) setRawStream(data.stream);
+                    if (data.master) setMasterLog(data.master);
+                    if (data.anchors) setAnchors(data.anchors);
+                    if (data.briefings) setBriefings(data.briefings);
+                    alert("Data successfully imported!");
+                } catch (err) {
+                    alert("Invalid backup file.");
+                }
+            };
+            reader.readAsText(file);
+        }
+        e.target.value = '';
+    };
 
     // Actions
     const addStreamEntry = (text, image = null) => {
@@ -194,6 +228,10 @@ export default function Home() {
             <header className="top-bar">
                 <h1>Mizuta Memory Stream</h1>
                 <div className="actions">
+                    <button className="btn btn-secondary btn-small" onClick={exportData} title="Backup Data to File">Export</button>
+                    <button className="btn btn-secondary btn-small" onClick={() => importInputRef.current?.click()} title="Restore Data from File">Import</button>
+                    <input type="file" accept=".json" ref={importInputRef} onChange={handleImport} className="hidden" />
+                    
                     <button className="btn btn-panic" onClick={() => setActiveModal('panic')}>PANIC</button>
                     <button className="btn btn-secondary" onClick={() => setActiveModal('search')}>Search</button>
                     <button className="btn btn-secondary" onClick={() => setActiveModal('review')}>Nightly Review</button>
