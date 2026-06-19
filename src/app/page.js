@@ -16,6 +16,7 @@ export default function Home() {
 
     // Modals visibility
     const [activeModal, setActiveModal] = useState(null); // 'panic', 'review', 'anchor', 'briefing', 'search'
+    const [settingsOpen, setSettingsOpen] = useState(false);
 
     // Form states
     const [streamInput, setStreamInput] = useState("");
@@ -247,8 +248,15 @@ export default function Home() {
             <header className="top-bar">
                 <h1>Mizuta Memory Stream</h1>
                 <div className="actions">
-                    <button className="btn btn-secondary btn-small" onClick={exportData} title="Backup Data to File">Export</button>
-                    <button className="btn btn-secondary btn-small" onClick={() => importInputRef.current?.click()} title="Restore Data from File">Import</button>
+                    <div style={{position: 'relative', display: 'inline-block'}}>
+                        <button className="btn btn-secondary" onClick={() => setSettingsOpen(!settingsOpen)}>Settings ▼</button>
+                        {settingsOpen && (
+                            <div className="dropdown-menu" style={{position: 'absolute', top: '100%', right: 0, backgroundColor: 'var(--surface-color)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '0.5rem', zIndex: 100, display: 'flex', flexDirection: 'column', gap: '0.5rem', minWidth: '120px', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', marginTop: '0.5rem'}}>
+                                <button className="btn btn-secondary btn-small" onClick={() => { exportData(); setSettingsOpen(false); }} title="Backup Data to File" style={{width: '100%'}}>Backup</button>
+                                <button className="btn btn-secondary btn-small" onClick={() => { importInputRef.current?.click(); setSettingsOpen(false); }} title="Restore Data from File" style={{width: '100%'}}>Import</button>
+                            </div>
+                        )}
+                    </div>
                     <input type="file" accept=".json" ref={importInputRef} onChange={handleImport} className="hidden" />
                     
                     <button className="btn btn-panic" onClick={() => setActiveModal('panic')}>PANIC</button>
@@ -294,9 +302,10 @@ export default function Home() {
                         ))}
                     </div>
 
-                    <div className="section-header">
+                    <div className="section-header" style={{ marginBottom: '0.5rem' }}>
                         <h2>Master Log (Summary)</h2>
                     </div>
+                    <p style={{marginBottom: '1rem', color: 'var(--text-muted)', fontSize: '0.9rem'}}>Your nightly summaries of important daily events.</p>
                     <div className="master-log-list">
                         {[...masterLog].reverse().map(log => (
                             <div key={log.id} className="master-log-card">
@@ -347,10 +356,11 @@ export default function Home() {
             {activeModal === 'panic' && (
                 <div className="modal">
                     <div className="modal-content panic-content">
-                        <div className="modal-header">
+                        <div className="modal-header" style={{ marginBottom: '0.5rem' }}>
                             <h2>DON'T PANIC. YOU ARE SAFE.</h2>
                             <button className="btn-close" onClick={() => setActiveModal(null)}>&times;</button>
                         </div>
+                        <p style={{marginBottom: '1.5rem', color: 'var(--text-muted)'}}>Take a deep breath. Here is a summary of your most recent activities to help ground you.</p>
                         <div className="panic-body">
                             <h3>Latest Logs</h3>
                             <div className="panic-logs">
@@ -371,10 +381,11 @@ export default function Home() {
             {activeModal === 'anchor' && (
                 <div className="modal">
                     <div className="modal-content anchor-content">
-                        <div className="modal-header">
+                        <div className="modal-header" style={{ marginBottom: '0.5rem' }}>
                             <h2>Add New Anchor</h2>
                             <button className="btn-close" onClick={() => setActiveModal(null)}>&times;</button>
                         </div>
+                        <p style={{marginBottom: '1.5rem', color: 'var(--text-muted)'}}>Set an anchor to remember your current task or state of mind.</p>
                         <div className="anchor-body">
                             <input autoFocus type="text" className="premium-input" value={anchorInput} onChange={(e) => setAnchorInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && addAnchor()} placeholder="e.g., Eating lunch..." style={{marginBottom: 0}} />
                             <button className="btn btn-primary" onClick={addAnchor}>Add</button>
@@ -386,10 +397,11 @@ export default function Home() {
             {activeModal === 'briefing' && (
                 <div className="modal">
                     <div className="modal-content anchor-content">
-                        <div className="modal-header">
+                        <div className="modal-header" style={{ marginBottom: '0.5rem' }}>
                             <h2>Add Briefing Card</h2>
                             <button className="btn-close" onClick={() => setActiveModal(null)}>&times;</button>
                         </div>
+                        <p style={{marginBottom: '1.5rem', color: 'var(--text-muted)'}}>Create a quick reference card for where you are going, who you are meeting, and what you need to know.</p>
                         <div className="anchor-body" style={{flexDirection: 'column'}}>
                             <input autoFocus type="text" className="premium-input" value={briefingWhere} onChange={(e) => setBriefingWhere(e.target.value)} placeholder="Where am I going?" style={{marginBottom:'0.5rem'}}/>
                             <input type="text" className="premium-input" value={briefingWho} onChange={(e) => setBriefingWho(e.target.value)} placeholder="Who am I meeting?" style={{marginBottom:'0.5rem'}}/>
@@ -432,10 +444,11 @@ export default function Home() {
             {activeModal === 'search' && (
                 <div className="modal">
                     <div className="modal-content search-content">
-                        <div className="modal-header">
+                        <div className="modal-header" style={{ marginBottom: '0.5rem' }}>
                             <h2>Search Memories</h2>
                             <button className="btn-close" onClick={() => setActiveModal(null)}>&times;</button>
                         </div>
+                        <p style={{marginBottom: '1.5rem', color: 'var(--text-muted)'}}>Search through your daily stream and master log entries.</p>
                         <div className="search-body">
                             <div className="stream-input-container">
                                 <input autoFocus type="text" className="premium-input" value={searchInput} onChange={(e) => setSearchInput(e.target.value)} placeholder="What are you looking for?" style={{flex:1}} />
