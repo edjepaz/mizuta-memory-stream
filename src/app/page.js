@@ -249,11 +249,11 @@ export default function Home() {
                 <h1>Mizuta Memory Stream</h1>
                 <div className="actions">
                     <div style={{position: 'relative', display: 'inline-block'}}>
-                        <button className="btn btn-secondary" onClick={() => setSettingsOpen(!settingsOpen)}>Settings ▼</button>
+                        <button className="btn btn-secondary" onClick={() => setSettingsOpen(!settingsOpen)}>🧠 Memory ▼</button>
                         {settingsOpen && (
                             <div className="dropdown-menu" style={{position: 'absolute', top: '100%', right: 0, backgroundColor: 'var(--surface-color)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '0.5rem', zIndex: 100, display: 'flex', flexDirection: 'column', gap: '0.5rem', minWidth: '120px', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', marginTop: '0.5rem'}}>
                                 <button className="btn btn-secondary btn-small" onClick={() => { exportData(); setSettingsOpen(false); }} title="Backup Data to File" style={{width: '100%'}}>Backup</button>
-                                <button className="btn btn-secondary btn-small" onClick={() => { importInputRef.current?.click(); setSettingsOpen(false); }} title="Restore Data from File" style={{width: '100%'}}>Import</button>
+                                <button className="btn btn-secondary btn-small" onClick={() => { importInputRef.current?.click(); setSettingsOpen(false); }} title="Restore Data from File" style={{width: '100%'}}>Restore</button>
                             </div>
                         )}
                     </div>
