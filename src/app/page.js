@@ -12,6 +12,7 @@ export default function Home() {
 
     // Loading state for hydration
     const [mounted, setMounted] = useState(false);
+    const [showIntro, setShowIntro] = useState(false);
 
     // Modals visibility
     const [activeModal, setActiveModal] = useState(null); // 'panic', 'review', 'anchor', 'briefing', 'search'
@@ -36,6 +37,11 @@ export default function Home() {
         setMasterLog(JSON.parse(localStorage.getItem('mizuta_master')) || []);
         setAnchors(JSON.parse(localStorage.getItem('mizuta_anchors')) || []);
         setBriefings(JSON.parse(localStorage.getItem('mizuta_briefings')) || []);
+        
+        if (!localStorage.getItem('mizuta_intro_seen')) {
+            setShowIntro(true);
+        }
+
         setMounted(true);
     }, []);
 
@@ -59,6 +65,11 @@ export default function Home() {
             streamListRef.current.scrollTop = 0;
         }
     }, [rawStream.length]);
+
+    const closeIntro = () => {
+        localStorage.setItem('mizuta_intro_seen', 'true');
+        setShowIntro(false);
+    };
 
     // Utilities
     const getTimestamp = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -456,6 +467,26 @@ export default function Home() {
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showIntro && (
+                <div className="modal">
+                    <div className="modal-content" style={{ maxWidth: '600px' }}>
+                        <div className="modal-header">
+                            <h2>Welcome to Mizuta Memory Stream</h2>
+                            <button className="btn-close" onClick={closeIntro}>&times;</button>
+                        </div>
+                        <div className="intro-body" style={{ padding: '1.5rem', lineHeight: '1.6' }}>
+                            <p style={{ marginBottom: '1rem' }}>This application is designed to help you capture, retain, and review your daily experiences following the Mizuta Methodology.</p>
+                            <ul style={{ paddingLeft: '1.5rem', marginBottom: '1.5rem' }}>
+                                <li style={{ marginBottom: '0.5rem' }}><strong>Stream:</strong> Log what is happening right now in the right column. You can use text, voice dictation, or camera.</li>
+                                <li style={{ marginBottom: '0.5rem' }}><strong>Anchors & Briefings:</strong> Set active tasks and important information to remind yourself of what you are doing or where you are going.</li>
+                                <li style={{ marginBottom: '0.5rem' }}><strong>Nightly Review:</strong> At the end of the day, review your stream, highlight important events, and summarize them into your Master Log for long-term memory.</li>
+                            </ul>
+                            <button className="btn btn-primary" onClick={closeIntro} style={{ width: '100%', padding: '0.75rem', fontSize: '1.1rem' }}>Get Started</button>
                         </div>
                     </div>
                 </div>
